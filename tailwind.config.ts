@@ -18,6 +18,7 @@ const config: Config = {
       fontFamily: {
         heading: ["var(--font-spectral)", "serif"],
         body: ["var(--font-work-sans)", "sans-serif"],
+        display: ["var(--font-display)", "serif"],
       },
       borderRadius: {
         card: "12px",
