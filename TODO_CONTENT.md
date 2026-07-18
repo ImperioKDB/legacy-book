@@ -15,12 +15,18 @@ Day 7 buffer starts here, not with a blind search through the codebase.
 - [ ] Every student's `testimony` — schema allows null, but empty state
       looks worse than missing feature per PRD Day 7 checklist
 - [ ] Every student's `favorite_scripture` — same as above
+- [ ] "Lionel Messi" test student row — delete before launch, currently
+      still in `students` table for testing other flows
 
 ## Day 4 — Gallery + Memory Wall
-- [ ] (append when placeholders are added)
+- [ ] `PhotoLightbox.tsx` still imports framer-motion — same RSC bundler
+      bug that broke Day 5's letter page is a live risk here too, just
+      hasn't surfaced yet. Swap to CSS animation before launch, don't wait
+      for it to break under real traffic.
 
 ## Day 5 — Letters
-- [ ] (append when placeholders are added)
+- [x] Test letters (unlocked + locked) — created, verified, deleted.
+      RLS unlock boundary confirmed working via direct anon-role query.
 
 ## Day 6 — Admin Dashboard
 - [ ] (append when placeholders are added)
