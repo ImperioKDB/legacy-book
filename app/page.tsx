@@ -13,10 +13,6 @@ export default async function Home() {
     .order("created_at", { ascending: false })
     .limit(50);
 
-  // Shuffle server-side per request so the homepage feels different
-  // each visit, without needing client-side re-randomization (which
-  // would cause a hydration mismatch since server and client would
-  // pick different random orders for the same markup).
   const shuffled = [...(allPhotos ?? [])].sort(() => Math.random() - 0.5);
   const photos = shuffled.slice(0, 16);
 
@@ -34,7 +30,7 @@ export default async function Home() {
             />
           </div>
 
-          <h1 className="font-heading text-4xl md:text-5xl text-ink mb-4">
+          <h1 className="font-display text-4xl md:text-6xl text-accent mb-4 leading-tight">
             The Legacy Book
           </h1>
 
@@ -43,7 +39,7 @@ export default async function Home() {
           </p>
 
           <p className="font-body text-base text-ink mb-10">
-            Luminaire: The Lightbearers
+            Class Motto Goes Here
           </p>
 
           <Link href="/students" className="btn-hero">
