@@ -7,11 +7,18 @@ import { Photo } from "@/lib/types";
 export const revalidate = 0;
 
 export default async function Home() {
-  const { data: photos } = await supabase
+  const { data: allPhotos } = await supabase
     .from("photos")
     .select("*")
     .order("created_at", { ascending: false })
-    .limit(8);
+    .limit(50);
+
+  // Shuffle server-side per request so the homepage feels different
+  // each visit, without needing client-side re-randomization (which
+  // would cause a hydration mismatch since server and client would
+  // pick different random orders for the same markup).
+  const shuffled = [...(allPhotos ?? [])].sort(() => Math.random() - 0.5);
+  const photos = shuffled.slice(0, 16);
 
   return (
     <>
