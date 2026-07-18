@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 
@@ -14,6 +14,13 @@ const links = [
 
 export function SiteNav() {
   const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
 
   return (
     <>
@@ -57,7 +64,7 @@ export function SiteNav() {
         role="dialog"
         aria-modal="true"
         aria-label="Site menu"
-        className={`fixed top-0 right-0 z-50 h-full w-72 max-w-[80vw] bg-bg shadow-xl
+        className={`fixed top-0 right-0 z-50 h-full w-72 max-w-[80vw] bg-bg shadow-xl overflow-y-auto
           transform transition-transform duration-300 ease-out motion-reduce:transition-none
           ${open ? "translate-x-0" : "translate-x-full"}`}
       >
