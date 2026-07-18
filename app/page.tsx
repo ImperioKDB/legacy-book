@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <main className="min-h-[calc(100dvh-4rem)] flex flex-col items-center justify-center px-6 py-16 text-center">
       <div className="max-w-xl w-full">
-        <div className="relative w-full aspect-[4/3] rounded-card overflow-hidden mb-8 bg-accent-soft">
+        <div className="relative w-full aspect-[4/3] rounded-card overflow-hidden mb-8 bg-accent-soft shadow-[0_20px_50px_-20px_rgba(43,36,32,0.3)]">
           <Image
             src="https://gwxiwvpqmcrkrdiqaokp.supabase.co/storage/v1/object/public/legacy-book-assets/site/hero.jpg"
             alt="Graduating class"
@@ -27,8 +27,9 @@ export default function Home() {
           Class Motto Goes Here
         </p>
 
-        <Link href="/students" className="btn-primary inline-block">
+        <Link href="/students" className="btn-hero">
           Meet the Class
+          <span aria-hidden="true">→</span>
         </Link>
       </div>
     </main>
