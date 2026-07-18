@@ -20,7 +20,7 @@ export function SiteNav() {
       <nav className="sticky top-0 z-40 bg-bg/95 backdrop-blur border-b border-accent-soft">
         <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center">
-            <div className="relative w-11 h-11 shrink-0">
+            <div className="relative w-14 h-14 shrink-0">
               <Image
                 src="https://gwxiwvpqmcrkrdiqaokp.supabase.co/storage/v1/object/public/legacy-book-assets/site/file_0000000054088246b79aebd9c67c00f7.png"
                 alt="TACSFON"
