@@ -25,7 +25,25 @@ export function HeroUploadForm() {
     });
 
     setStatus(res.ok ? "done" : "error");
-    if (res.ok) setFile(null);
+  }
+
+  function reset() {
+    setFile(null);
+    setStatus("idle");
+  }
+
+  if (status === "done") {
+    return (
+      <div className="bg-surface rounded-card shadow-sm p-6 text-center">
+        <p className="font-body text-ink mb-1">Hero photo updated.</p>
+        <p className="font-body text-sm text-muted mb-4">
+          Visit the homepage to see it live.
+        </p>
+        <button onClick={reset} className="btn-secondary">
+          Upload a Different Photo
+        </button>
+      </div>
+    );
   }
 
   return (
@@ -47,14 +65,11 @@ export function HeroUploadForm() {
       {status === "error" && (
         <p className="font-body text-sm text-red-600">Upload failed — please try again.</p>
       )}
-      {status === "done" && (
-        <p className="font-body text-sm text-green-700">Hero photo updated.</p>
-      )}
 
       <button
         type="submit"
         disabled={status === "saving" || !file}
-        className="w-full bg-accent text-white font-body font-medium min-h-[44px] rounded-card active:scale-[0.98] transition-transform disabled:opacity-50"
+        className="btn-primary w-full disabled:active:scale-100"
       >
         {status === "saving" ? "Uploading..." : "Set Hero Photo"}
       </button>
