@@ -8,11 +8,11 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        bg: "#FAF7F2",
+        bg: "#FBF6EE",
         surface: "#FFFFFF",
         ink: "#2B2420",
-        accent: "#B8763E",
-        "accent-soft": "#E8D5C0",
+        accent: "#6B2737",
+        "accent-soft": "#EFE0DD",
         muted: "#8A7E70",
       },
       fontFamily: {
