@@ -43,7 +43,7 @@ export default async function Home() {
           </p>
 
           <p className="font-body text-base text-ink mb-10">
-            Class Motto Goes Here
+            Luminaire: The Lightbearers
           </p>
 
           <Link href="/students" className="btn-hero">
