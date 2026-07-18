@@ -18,6 +18,11 @@ export function HomeGalleryRotator({ photos }: { photos: Photo[] }) {
 
   if (photos.length === 0) return null;
 
+  function goTo(i: number) {
+    setIndex(i);
+    setPaused(true);
+  }
+
   return (
     <section className="px-6 py-16 max-w-2xl mx-auto text-center">
       <h2 className="font-heading text-2xl text-ink mb-6">Moments from the Year</h2>
@@ -42,44 +47,22 @@ export function HomeGalleryRotator({ photos }: { photos: Photo[] }) {
         {photos.length > 1 && (
           <>
             <button
-              onClick={() => setIndex((i) => (i - 1 + photos.length) % photos.length)}
+              onClick={() => goTo((index - 1 + photos.length) % photos.length)}
               aria-label="Previous photo"
               className="absolute left-2 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/90 rounded-full flex items-center justify-center text-ink"
             >
               ‹
             </button>
             <button
-              onClick={() => setIndex((i) => (i + 1) % photos.length)}
+              onClick={() => goTo((index + 1) % photos.length)}
               aria-label="Next photo"
               className="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/90 rounded-full flex items-center justify-center text-ink"
             >
               ›
             </button>
-            <button
-              onClick={() => setPaused((p) => !p)}
-              aria-label={paused ? "Resume slideshow" : "Pause slideshow"}
-              className="absolute bottom-2 right-2 w-9 h-9 bg-white/90 rounded-full flex items-center justify-center text-ink text-sm"
-            >
-              {paused ? "▶" : "❚❚"}
-            </button>
           </>
         )}
       </div>
-
-      {photos.length > 1 && (
-        <div className="flex justify-center gap-1.5 mt-4">
-          {photos.map((_, i) => (
-            <button
-              key={i}
-              onClick={() => setIndex(i)}
-              aria-label={`Go to photo ${i + 1}`}
-              className={`w-2 h-2 rounded-full transition-colors ${
-                i === index ? "bg-accent" : "bg-accent-soft"
-              }`}
-            />
-          ))}
-        </div>
-      )}
     </section>
   );
 }
