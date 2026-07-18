@@ -4,10 +4,11 @@ import { useEffect, useState } from "react";
 import { AdminGate } from "@/components/AdminGate";
 import { ModerationPanel } from "@/components/ModerationPanel";
 import { PhotoUploadForm } from "@/components/PhotoUploadForm";
+import { HeroUploadForm } from "@/components/HeroUploadForm";
 import { supabase } from "@/lib/supabase-client";
 import { Student } from "@/lib/types";
 
-type Tab = "students" | "moderate" | "photos";
+type Tab = "students" | "moderate" | "photos" | "hero";
 
 export default function AdminDashboardPage() {
   const [tab, setTab] = useState<Tab>("moderate");
@@ -90,11 +91,21 @@ export default function AdminDashboardPage() {
           >
             Upload Photo
           </button>
+          <button
+            onClick={() => setTab("hero")}
+            className={`px-4 py-2 rounded-card font-body text-sm whitespace-nowrap min-h-[44px] ${
+              tab === "hero" ? "bg-accent text-white" : "bg-white text-ink border border-muted/30"
+            }`}
+          >
+            Hero Photo
+          </button>
         </div>
 
         {tab === "moderate" && <ModerationPanel />}
 
         {tab === "photos" && <PhotoUploadForm students={students} />}
+
+        {tab === "hero" && <HeroUploadForm />}
 
         {tab === "students" && (
           <form onSubmit={handleStudentSubmit} className="bg-surface rounded-card shadow-sm p-6 space-y-4">
