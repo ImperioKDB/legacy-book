@@ -11,13 +11,17 @@ export function ModerationPanel() {
 
   async function loadPending() {
     setLoading(true);
-    const { data } = await supabase
-      .from("memory_wall")
-      .select("*")
-      .eq("approved", false)
-      .order("created_at", { ascending: true });
+    const { data: sessionData } = await supabase.auth.getSession();
+    const token = sessionData.session?.access_token;
 
-    setPending((data as MemoryWallMessage[]) ?? []);
+    const res = await fetch("/api/admin/memory-wall", {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (res.ok) {
+      const json = await res.json();
+      setPending(json.messages ?? []);
+    }
     setLoading(false);
   }
 
