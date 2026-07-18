@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
-import { Fraunces, Inter } from "next/font/google";
+import { Spectral, Work_Sans } from "next/font/google";
+import { SiteNav } from "@/components/SiteNav";
 import "./globals.css";
 
-const fraunces = Fraunces({
+const spectral = Spectral({
   subsets: ["latin"],
-  variable: "--font-fraunces",
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-spectral",
   display: "swap",
 });
 
-const inter = Inter({
+const workSans = Work_Sans({
   subsets: ["latin"],
-  variable: "--font-inter",
+  variable: "--font-work-sans",
   display: "swap",
 });
 
@@ -25,8 +27,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${inter.variable}`}>
-      <body className="font-body">{children}</body>
+    <html lang="en" className={`${spectral.variable} ${workSans.variable}`}>
+      <body className="font-body">
+        <SiteNav />
+        {children}
+      </body>
     </html>
   );
 }
