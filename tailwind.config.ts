@@ -16,8 +16,8 @@ const config: Config = {
         muted: "#8A7E70",
       },
       fontFamily: {
-        heading: ["var(--font-fraunces)", "serif"],
-        body: ["var(--font-inter)", "sans-serif"],
+        heading: ["var(--font-spectral)", "serif"],
+        body: ["var(--font-work-sans)", "sans-serif"],
       },
       borderRadius: {
         card: "12px",
