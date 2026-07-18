@@ -1,2 +1,4 @@
-# legacy-book
-The Legacy Book — church send-off site (students, gallery, memory wall, letters)
+# The Legacy Book
+
+Digital send-off site for final-year church students.
+Built via Colab → GitHub Contents API → Vercel.
