@@ -12,7 +12,7 @@ export default async function LetterViewPage({
 }) {
   const { data: letter, error } = await supabase
     .from("letters")
-    .select("*, students(full_name)")
+    .select("*")
     .eq("id", params.id)
     .single();
 
@@ -23,14 +23,20 @@ export default async function LetterViewPage({
     notFound();
   }
 
-  const l = letter as Letter & { students: { full_name: string } | null };
+  const l = letter as Letter;
+
+  const { data: student } = await supabase
+    .from("students")
+    .select("full_name")
+    .eq("id", l.student_id)
+    .single();
 
   return (
     <main className="px-6 py-12 max-w-xl mx-auto">
       <Card>
-        {l.students?.full_name && (
+        {student?.full_name && (
           <p className="font-body text-sm text-muted mb-2">
-            A letter from {l.students.full_name}
+            A letter from {student.full_name}
           </p>
         )}
         <p className="font-body text-ink whitespace-pre-wrap leading-relaxed">
