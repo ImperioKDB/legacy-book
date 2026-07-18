@@ -29,7 +29,7 @@ export function ModerationPanel() {
     loadPending();
   }, []);
 
-  async function handleAction(id: string, approved: boolean) {
+  async function handleApprove(id: string) {
     setActingId(id);
     const { data: sessionData } = await supabase.auth.getSession();
     const token = sessionData.session?.access_token;
@@ -40,7 +40,21 @@ export function ModerationPanel() {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify({ approved }),
+      body: JSON.stringify({ approved: true }),
+    });
+
+    setActingId(null);
+    loadPending();
+  }
+
+  async function handleReject(id: string) {
+    setActingId(id);
+    const { data: sessionData } = await supabase.auth.getSession();
+    const token = sessionData.session?.access_token;
+
+    await fetch(`/api/admin/memory-wall/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
     });
 
     setActingId(null);
@@ -63,14 +77,14 @@ export function ModerationPanel() {
           <p className="font-body text-sm text-muted mb-4">— {msg.author_name}</p>
           <div className="flex gap-3">
             <button
-              onClick={() => handleAction(msg.id, true)}
+              onClick={() => handleApprove(msg.id)}
               disabled={actingId === msg.id}
               className="flex-1 bg-accent text-white font-body font-medium min-h-[44px] rounded-card disabled:opacity-50"
             >
               Approve
             </button>
             <button
-              onClick={() => handleAction(msg.id, false)}
+              onClick={() => handleReject(msg.id)}
               disabled={actingId === msg.id}
               className="flex-1 bg-white border border-muted/40 text-ink font-body font-medium min-h-[44px] rounded-card disabled:opacity-50"
             >
