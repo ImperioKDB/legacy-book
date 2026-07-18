@@ -16,9 +16,6 @@ export default async function LetterViewPage({
     .eq("id", params.id)
     .single();
 
-  // RLS silently excludes locked letters from the result set —
-  // error or null here means either it doesn't exist, or it's not
-  // unlocked yet. Both cases correctly resolve to a 404.
   if (error || !letter) {
     notFound();
   }
