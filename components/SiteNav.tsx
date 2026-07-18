@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 
 const links = [
   { href: "/", label: "Home" },
@@ -18,8 +19,16 @@ export function SiteNav() {
     <>
       <nav className="sticky top-0 z-40 bg-bg/95 backdrop-blur border-b border-accent-soft">
         <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="font-heading text-lg text-ink">
-            The Legacy Book
+          <Link href="/" className="flex items-center">
+            <div className="relative w-11 h-11 shrink-0">
+              <Image
+                src="https://gwxiwvpqmcrkrdiqaokp.supabase.co/storage/v1/object/public/legacy-book-assets/site/badge.png"
+                alt="TACSFON"
+                fill
+                className="object-contain"
+              />
+            </div>
+            <span className="sr-only">The Legacy Book — Home</span>
           </Link>
 
           <button
@@ -36,7 +45,6 @@ export function SiteNav() {
         </div>
       </nav>
 
-      {/* Backdrop */}
       <div
         onClick={() => setOpen(false)}
         aria-hidden="true"
@@ -45,7 +53,6 @@ export function SiteNav() {
         }`}
       />
 
-      {/* Slide-in panel */}
       <div
         role="dialog"
         aria-modal="true"
