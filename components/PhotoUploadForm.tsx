@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { supabase } from "@/lib/supabase-client";
 import { Student } from "@/lib/types";
+import { StudentPicker } from "@/components/StudentPicker";
 
 export function PhotoUploadForm({ students }: { students: Student[] }) {
   const [file, setFile] = useState<File | null>(null);
@@ -26,20 +27,29 @@ export function PhotoUploadForm({ students }: { students: Student[] }) {
 
     const res = await fetch("/api/admin/photos", {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: { Authorization: `Bearer ${token}` },
       body: formData,
     });
 
-    if (res.ok) {
-      setStatus("done");
-      setFile(null);
-      setStudentId("");
-      setCaption("");
-    } else {
-      setStatus("error");
-    }
+    setStatus(res.ok ? "done" : "error");
+  }
+
+  function reset() {
+    setFile(null);
+    setStudentId("");
+    setCaption("");
+    setStatus("idle");
+  }
+
+  if (status === "done") {
+    return (
+      <div className="bg-surface rounded-card shadow-sm p-6 text-center">
+        <p className="font-body text-ink mb-4">Photo uploaded successfully.</p>
+        <button onClick={reset} className="btn-secondary">
+          Upload Another
+        </button>
+      </div>
+    );
   }
 
   return (
@@ -57,20 +67,9 @@ export function PhotoUploadForm({ students }: { students: Student[] }) {
 
       <div>
         <label className="block font-body text-sm text-ink mb-1">
-          Assign to Student (optional — leave blank for general gallery)
+          Assign to Student (optional)
         </label>
-        <select
-          value={studentId}
-          onChange={(e) => setStudentId(e.target.value)}
-          className="w-full min-h-[44px] px-3 rounded-card border border-muted/30 font-body bg-white"
-        >
-          <option value="">General gallery photo</option>
-          {students.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.full_name}
-            </option>
-          ))}
-        </select>
+        <StudentPicker students={students} value={studentId} onChange={setStudentId} />
       </div>
 
       <div>
@@ -85,14 +84,11 @@ export function PhotoUploadForm({ students }: { students: Student[] }) {
       {status === "error" && (
         <p className="font-body text-sm text-red-600">Upload failed — please try again.</p>
       )}
-      {status === "done" && (
-        <p className="font-body text-sm text-green-700">Photo uploaded.</p>
-      )}
 
       <button
         type="submit"
         disabled={status === "saving" || !file}
-        className="w-full bg-accent text-white font-body font-medium min-h-[44px] rounded-card disabled:opacity-50"
+        className="btn-primary w-full disabled:active:scale-100"
       >
         {status === "saving" ? "Uploading..." : "Upload Photo"}
       </button>
