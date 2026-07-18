@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Spectral, Work_Sans } from "next/font/google";
 import { SiteNav } from "@/components/SiteNav";
+import { BackgroundDecor } from "@/components/BackgroundDecor";
 import "./globals.css";
 
 const spectral = Spectral({
@@ -28,7 +29,8 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${spectral.variable} ${workSans.variable}`}>
-      <body className="font-body">
+      <body className="font-body relative">
+        <BackgroundDecor />
         <SiteNav />
         {children}
       </body>
