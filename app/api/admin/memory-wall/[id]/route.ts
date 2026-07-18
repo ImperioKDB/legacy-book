@@ -48,3 +48,24 @@ export async function PATCH(
 
   return NextResponse.json({ message: data });
 }
+
+export async function DELETE(
+  req: NextRequest,
+  { params }: { params: { id: string } }
+) {
+  const user = await checkAdmin(req);
+  if (!user) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
+  const { error } = await supabaseServer
+    .from("memory_wall")
+    .delete()
+    .eq("id", params.id);
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ deleted: true });
+}
