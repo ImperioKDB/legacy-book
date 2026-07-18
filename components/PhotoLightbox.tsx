@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { motion, AnimatePresence } from "framer-motion";
 import { Photo } from "@/lib/types";
 
 export function PhotoLightbox({ photos }: { photos: Photo[] }) {
@@ -29,7 +28,7 @@ export function PhotoLightbox({ photos }: { photos: Photo[] }) {
           <button
             key={photo.id}
             onClick={() => setActiveIndex(i)}
-            className="block w-full rounded-card overflow-hidden bg-accent-soft break-inside-avoid"
+            className="block w-full rounded-card overflow-hidden bg-accent-soft break-inside-avoid animate-fade-up"
           >
             <Image
               src={photo.image_url}
@@ -42,63 +41,58 @@ export function PhotoLightbox({ photos }: { photos: Photo[] }) {
         ))}
       </div>
 
-      <AnimatePresence>
-        {activeIndex !== null && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.2 }}
-            className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center px-4"
-            onClick={close}
+      {activeIndex !== null && (
+        <div
+          className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center px-4 animate-fade-up"
+          style={{ animationDuration: "0.2s" }}
+          onClick={close}
+        >
+          <div
+            className="relative max-w-lg w-full"
+            onClick={(e) => e.stopPropagation()}
           >
-            <div
-              className="relative max-w-lg w-full"
-              onClick={(e) => e.stopPropagation()}
+            <Image
+              src={photos[activeIndex].image_url}
+              alt={photos[activeIndex].caption ?? "Gallery photo"}
+              width={800}
+              height={800}
+              className="w-full h-auto rounded-card"
+            />
+            {photos[activeIndex].caption && (
+              <p className="font-body text-white text-sm text-center mt-3">
+                {photos[activeIndex].caption}
+              </p>
+            )}
+
+            <button
+              onClick={close}
+              aria-label="Close"
+              className="absolute -top-3 -right-3 w-11 h-11 bg-white rounded-full flex items-center justify-center text-ink font-bold"
             >
-              <Image
-                src={photos[activeIndex].image_url}
-                alt={photos[activeIndex].caption ?? "Gallery photo"}
-                width={800}
-                height={800}
-                className="w-full h-auto rounded-card"
-              />
-              {photos[activeIndex].caption && (
-                <p className="font-body text-white text-sm text-center mt-3">
-                  {photos[activeIndex].caption}
-                </p>
-              )}
+              ✕
+            </button>
 
-              <button
-                onClick={close}
-                aria-label="Close"
-                className="absolute -top-3 -right-3 w-11 h-11 bg-white rounded-full flex items-center justify-center text-ink font-bold"
-              >
-                ✕
-              </button>
-
-              {photos.length > 1 && (
-                <>
-                  <button
-                    onClick={prev}
-                    aria-label="Previous photo"
-                    className="absolute left-2 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/90 rounded-full flex items-center justify-center text-ink"
-                  >
-                    ‹
-                  </button>
-                  <button
-                    onClick={next}
-                    aria-label="Next photo"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/90 rounded-full flex items-center justify-center text-ink"
-                  >
-                    ›
-                  </button>
-                </>
-              )}
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            {photos.length > 1 && (
+              <>
+                <button
+                  onClick={prev}
+                  aria-label="Previous photo"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/90 rounded-full flex items-center justify-center text-ink"
+                >
+                  ‹
+                </button>
+                <button
+                  onClick={next}
+                  aria-label="Next photo"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/90 rounded-full flex items-center justify-center text-ink"
+                >
+                  ›
+                </button>
+              </>
+            )}
+          </div>
+        </div>
+      )}
     </>
   );
 }
