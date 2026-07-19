@@ -19,42 +19,13 @@ export default async function Home() {
     .select("id", { count: "exact", head: true })
     .eq("approved", true);
 
-  const photoPool = allPhotos ?? [];
-  const shuffled = [...photoPool].sort(() => Math.random() - 0.5);
-  const rotatorPhotos = shuffled.slice(0, 16);
-  const filmstripPhotos = shuffled.slice(0, 8);
+  const shuffled = [...(allPhotos ?? [])].sort(() => Math.random() - 0.5);
+  const photos = shuffled.slice(0, 16);
 
   return (
     <>
       <main className="min-h-[calc(100dvh-4rem)] md:min-h-0 flex flex-col items-center justify-center px-6 py-16 md:py-24 text-center">
         <div className="max-w-xl w-full">
-          {filmstripPhotos.length > 0 && (
-            <div className="mb-8 -mx-6 sm:mx-0">
-              <div className="bg-ink py-2 px-1 sm:rounded-card overflow-x-auto">
-                <div className="flex gap-1 items-center min-w-max px-2">
-                  <div className="flex flex-col gap-3 shrink-0 py-1">
-                    {Array.from({ length: 4 }).map((_, i) => (
-                      <div key={i} className="w-1.5 h-1.5 rounded-full bg-bg/30" />
-                    ))}
-                  </div>
-                  {filmstripPhotos.map((photo) => (
-                    <div
-                      key={photo.id}
-                      className="relative w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-sm overflow-hidden bg-accent-soft border-2 border-ink"
-                    >
-                      <Image src={photo.image_url} alt="" fill className="object-cover" />
-                    </div>
-                  ))}
-                  <div className="flex flex-col gap-3 shrink-0 py-1">
-                    {Array.from({ length: 4 }).map((_, i) => (
-                      <div key={i} className="w-1.5 h-1.5 rounded-full bg-bg/30" />
-                    ))}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-
           <div className="mx-auto max-w-sm">
             <div className="bg-surface p-3 pb-7 rounded-card shadow-[0_20px_50px_-20px_rgba(43,36,32,0.4)] -rotate-1">
               <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden bg-accent-soft">
@@ -104,7 +75,7 @@ export default async function Home() {
 
       <div className="bg-surface">
         <ScrollFade>
-          <HomeGalleryRotator photos={rotatorPhotos as Photo[]} />
+          <HomeGalleryRotator photos={(photos as Photo[]) ?? []} />
         </ScrollFade>
       </div>
     </>
