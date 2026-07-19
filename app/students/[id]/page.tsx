@@ -67,11 +67,11 @@ export default async function StudentProfilePage({
       {photos && photos.length > 0 && (
         <div className="mt-6">
           <h2 className="font-heading text-lg text-ink mb-3">Photos</h2>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="flex overflow-x-auto snap-x snap-mandatory gap-4 pb-2 -mx-6 px-6">
             {(photos as Photo[]).map((photo) => (
               <div
                 key={photo.id}
-                className="relative aspect-square rounded-card overflow-hidden bg-accent-soft"
+                className="relative shrink-0 w-full snap-center rounded-card overflow-hidden bg-accent-soft aspect-[4/5]"
               >
                 <Image
                   src={photo.image_url}
@@ -79,9 +79,19 @@ export default async function StudentProfilePage({
                   fill
                   className="object-cover"
                 />
+                {photo.caption && (
+                  <p className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent text-white text-sm font-body p-3">
+                    {photo.caption}
+                  </p>
+                )}
               </div>
             ))}
           </div>
+          {photos.length > 1 && (
+            <p className="font-body text-xs text-muted text-center mt-2">
+              Swipe for more
+            </p>
+          )}
         </div>
       )}
     </main>
