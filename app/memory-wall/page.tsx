@@ -5,6 +5,7 @@ import { supabase } from "@/lib/supabase-client";
 import { SectionHeading } from "@/components/SectionHeading";
 import { Card } from "@/components/Card";
 import { MemoryWallForm } from "@/components/MemoryWallForm";
+import { ScrollFade } from "@/components/ScrollFade";
 import { MemoryWallMessage } from "@/lib/types";
 
 export default function MemoryWallPage() {
@@ -41,11 +42,13 @@ export default function MemoryWallPage() {
         <p className="font-body text-muted text-center">Loading messages...</p>
       ) : messages.length > 0 ? (
         <div className="space-y-4">
-          {messages.map((msg) => (
-            <Card key={msg.id}>
-              <p className="font-body text-ink mb-2">{msg.message}</p>
-              <p className="font-body text-sm text-muted">— {msg.author_name}</p>
-            </Card>
+          {messages.map((msg, i) => (
+            <ScrollFade key={msg.id} delay={i * 60}>
+              <Card className="border-l-4 border-accent">
+                <p className="font-body text-ink mb-2">{msg.message}</p>
+                <p className="font-body text-sm text-muted">— {msg.author_name}</p>
+              </Card>
+            </ScrollFade>
           ))}
         </div>
       ) : (
