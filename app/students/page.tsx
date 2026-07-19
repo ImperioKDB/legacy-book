@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase-client";
 import { StudentCard } from "@/components/StudentCard";
 import { SectionHeading } from "@/components/SectionHeading";
+import { ScrollFade } from "@/components/ScrollFade";
 import { Student } from "@/lib/types";
 
 export const revalidate = 0;
@@ -15,9 +16,7 @@ export default async function StudentsPage() {
   if (error) {
     return (
       <main className="px-6 py-16 text-center">
-        <p className="font-body text-muted">
-          Couldn't load students right now.
-        </p>
+        <p className="font-body text-muted">Couldn't load students right now.</p>
       </main>
     );
   }
@@ -30,8 +29,10 @@ export default async function StudentsPage() {
 
       {students && students.length > 0 ? (
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          {(students as Student[]).map((student) => (
-            <StudentCard key={student.id} student={student} />
+          {(students as Student[]).map((student, i) => (
+            <ScrollFade key={student.id} delay={i * 60}>
+              <StudentCard student={student} />
+            </ScrollFade>
           ))}
         </div>
       ) : (
