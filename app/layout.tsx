@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Spectral, Work_Sans, Abril_Fatface } from "next/font/google";
 import { SiteNav } from "@/components/SiteNav";
+import { SiteFooter } from "@/components/SiteFooter";
 import { BackgroundDecor } from "@/components/BackgroundDecor";
 import "./globals.css";
 
@@ -36,10 +37,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={`${spectral.variable} ${workSans.variable} ${abrilFatface.variable}`}>
-      <body className="font-body relative">
+      <body className="font-body relative flex flex-col min-h-dvh">
         <BackgroundDecor />
         <SiteNav />
-        {children}
+        <div className="flex-1">{children}</div>
+        <SiteFooter />
       </body>
     </html>
   );
