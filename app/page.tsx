@@ -22,52 +22,57 @@ export default async function Home() {
   const photoPool = allPhotos ?? [];
   const shuffled = [...photoPool].sort(() => Math.random() - 0.5);
   const rotatorPhotos = shuffled.slice(0, 16);
-  const collageTiles = shuffled.slice(0, 6);
-
-  const tilePositions = [
-    "top-0 left-2 w-20 -rotate-[14deg]",
-    "top-4 right-0 w-24 rotate-[10deg]",
-    "bottom-8 left-0 w-20 rotate-[8deg]",
-    "bottom-0 right-4 w-24 -rotate-[9deg]",
-    "top-1/3 left-[-8px] w-16 rotate-[18deg]",
-    "top-1/4 right-[-8px] w-16 -rotate-[16deg]",
-  ];
+  const filmstripPhotos = shuffled.slice(0, 8);
 
   return (
     <>
-      <main className="min-h-[calc(100dvh-4rem)] flex flex-col items-center justify-center px-6 py-16 text-center">
+      <main className="min-h-[calc(100dvh-4rem)] md:min-h-0 flex flex-col items-center justify-center px-6 py-16 md:py-24 text-center">
         <div className="max-w-xl w-full">
-          <div className="relative mx-auto max-w-sm h-72 sm:h-80 mb-10">
-            {collageTiles.map((photo, i) => (
-              <div
-                key={photo.id}
-                className={`absolute bg-surface p-1.5 pb-4 rounded shadow-md opacity-80 ${tilePositions[i % tilePositions.length]}`}
-              >
-                <div className="relative w-full aspect-square rounded-sm overflow-hidden bg-accent-soft">
-                  <Image src={photo.image_url} alt="" fill className="object-cover" />
+          {filmstripPhotos.length > 0 && (
+            <div className="mb-8 -mx-6 sm:mx-0">
+              <div className="bg-ink py-2 px-1 sm:rounded-card overflow-x-auto">
+                <div className="flex gap-1 items-center min-w-max px-2">
+                  <div className="flex flex-col gap-3 shrink-0 py-1">
+                    {Array.from({ length: 4 }).map((_, i) => (
+                      <div key={i} className="w-1.5 h-1.5 rounded-full bg-bg/30" />
+                    ))}
+                  </div>
+                  {filmstripPhotos.map((photo) => (
+                    <div
+                      key={photo.id}
+                      className="relative w-16 h-16 sm:w-20 sm:h-20 shrink-0 rounded-sm overflow-hidden bg-accent-soft border-2 border-ink"
+                    >
+                      <Image src={photo.image_url} alt="" fill className="object-cover" />
+                    </div>
+                  ))}
+                  <div className="flex flex-col gap-3 shrink-0 py-1">
+                    {Array.from({ length: 4 }).map((_, i) => (
+                      <div key={i} className="w-1.5 h-1.5 rounded-full bg-bg/30" />
+                    ))}
+                  </div>
                 </div>
               </div>
-            ))}
+            </div>
+          )}
 
-            <div className="absolute inset-0 flex items-center justify-center z-10">
-              <div className="bg-surface p-3 pb-7 rounded-card shadow-[0_20px_50px_-20px_rgba(43,36,32,0.4)] -rotate-1 w-full max-w-[260px]">
-                <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden bg-accent-soft">
-                  <Image
-                    src="https://gwxiwvpqmcrkrdiqaokp.supabase.co/storage/v1/object/public/legacy-book-assets/site/hero.jpg"
-                    alt="Graduating class"
-                    fill
-                    className="object-cover"
-                    priority
-                  />
-                </div>
-                <p className="text-center text-xs text-muted mt-3 font-body italic">
-                  &quot;Let no man despise thy youth&quot; — 1 Timothy 4:12
-                </p>
+          <div className="mx-auto max-w-sm">
+            <div className="bg-surface p-3 pb-7 rounded-card shadow-[0_20px_50px_-20px_rgba(43,36,32,0.4)] -rotate-1">
+              <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden bg-accent-soft">
+                <Image
+                  src="https://gwxiwvpqmcrkrdiqaokp.supabase.co/storage/v1/object/public/legacy-book-assets/site/hero.jpg"
+                  alt="Graduating class"
+                  fill
+                  className="object-cover"
+                  priority
+                />
               </div>
+              <p className="text-center text-xs text-muted mt-3 font-body italic">
+                &quot;Let no man despise thy youth&quot; — 1 Timothy 4:12
+              </p>
             </div>
           </div>
 
-          <h1 className="font-display text-4xl md:text-6xl text-accent mb-2 leading-tight">
+          <h1 className="font-display text-4xl md:text-6xl text-accent mt-10 mb-2 leading-tight">
             The Legacy Book
           </h1>
           <div className="mx-auto w-10 h-0.5 bg-accent mb-4" />
