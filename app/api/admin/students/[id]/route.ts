@@ -56,8 +56,6 @@ export async function DELETE(
     );
   }
 
-  // Unlink (not delete) any photos tied to this student — they move
-  // to the general gallery instead of being destroyed.
   await supabaseServer
     .from("photos")
     .update({ student_id: null })
