@@ -5,12 +5,12 @@ import { AdminGate } from "@/components/AdminGate";
 import { ModerationPanel } from "@/components/ModerationPanel";
 import { PhotoUploadForm } from "@/components/PhotoUploadForm";
 import { PhotoManagementPanel } from "@/components/PhotoManagementPanel";
+import { StudentPortraitManager } from "@/components/StudentPortraitManager";
 import { HeroUploadForm } from "@/components/HeroUploadForm";
-import { StudentPicker } from "@/components/StudentPicker";
 import { supabase } from "@/lib/supabase-client";
 import { Student } from "@/lib/types";
 
-type Tab = "students" | "moderate" | "photos" | "manage" | "hero";
+type Tab = "students" | "portraits" | "moderate" | "photos" | "manage" | "hero";
 
 export default function AdminDashboardPage() {
   const [tab, setTab] = useState<Tab>("moderate");
@@ -21,7 +21,6 @@ export default function AdminDashboardPage() {
     department: "",
     favorite_scripture: "",
     testimony: "",
-    portrait_url: "",
   });
   const [studentStatus, setStudentStatus] = useState<"idle" | "saving" | "done" | "error">("idle");
 
@@ -46,18 +45,12 @@ export default function AdminDashboardPage() {
         "Content-Type": "application/json",
         Authorization: `Bearer ${token}`,
       },
-      body: JSON.stringify(form),
+      body: JSON.stringify({ ...form, portrait_url: "" }),
     });
 
     if (res.ok) {
       setStudentStatus("done");
-      setForm({
-        full_name: "",
-        department: "",
-        favorite_scripture: "",
-        testimony: "",
-        portrait_url: "",
-      });
+      setForm({ full_name: "", department: "", favorite_scripture: "", testimony: "" });
     } else {
       setStudentStatus("error");
     }
@@ -69,24 +62,16 @@ export default function AdminDashboardPage() {
         <h1 className="font-heading text-2xl text-ink mb-6">Admin Dashboard</h1>
 
         <div className="flex gap-2 mb-6 overflow-x-auto">
-          <button onClick={() => setTab("moderate")} className={`px-4 py-2 rounded-card font-body text-sm whitespace-nowrap min-h-[44px] ${tab === "moderate" ? "bg-accent text-white" : "bg-white text-ink border border-muted/30"}`}>
-            Moderate Wall
-          </button>
-          <button onClick={() => setTab("students")} className={`px-4 py-2 rounded-card font-body text-sm whitespace-nowrap min-h-[44px] ${tab === "students" ? "bg-accent text-white" : "bg-white text-ink border border-muted/30"}`}>
-            Add Student
-          </button>
-          <button onClick={() => setTab("photos")} className={`px-4 py-2 rounded-card font-body text-sm whitespace-nowrap min-h-[44px] ${tab === "photos" ? "bg-accent text-white" : "bg-white text-ink border border-muted/30"}`}>
-            Upload Photos
-          </button>
-          <button onClick={() => setTab("manage")} className={`px-4 py-2 rounded-card font-body text-sm whitespace-nowrap min-h-[44px] ${tab === "manage" ? "bg-accent text-white" : "bg-white text-ink border border-muted/30"}`}>
-            Manage Photos
-          </button>
-          <button onClick={() => setTab("hero")} className={`px-4 py-2 rounded-card font-body text-sm whitespace-nowrap min-h-[44px] ${tab === "hero" ? "bg-accent text-white" : "bg-white text-ink border border-muted/30"}`}>
-            Hero Photo
-          </button>
+          <button onClick={() => setTab("moderate")} className={`px-4 py-2 rounded-card font-body text-sm whitespace-nowrap min-h-[44px] ${tab === "moderate" ? "bg-accent text-white" : "bg-white text-ink border border-muted/30"}`}>Moderate Wall</button>
+          <button onClick={() => setTab("students")} className={`px-4 py-2 rounded-card font-body text-sm whitespace-nowrap min-h-[44px] ${tab === "students" ? "bg-accent text-white" : "bg-white text-ink border border-muted/30"}`}>Add Student</button>
+          <button onClick={() => setTab("portraits")} className={`px-4 py-2 rounded-card font-body text-sm whitespace-nowrap min-h-[44px] ${tab === "portraits" ? "bg-accent text-white" : "bg-white text-ink border border-muted/30"}`}>Portraits</button>
+          <button onClick={() => setTab("photos")} className={`px-4 py-2 rounded-card font-body text-sm whitespace-nowrap min-h-[44px] ${tab === "photos" ? "bg-accent text-white" : "bg-white text-ink border border-muted/30"}`}>Upload Photos</button>
+          <button onClick={() => setTab("manage")} className={`px-4 py-2 rounded-card font-body text-sm whitespace-nowrap min-h-[44px] ${tab === "manage" ? "bg-accent text-white" : "bg-white text-ink border border-muted/30"}`}>Manage Photos</button>
+          <button onClick={() => setTab("hero")} className={`px-4 py-2 rounded-card font-body text-sm whitespace-nowrap min-h-[44px] ${tab === "hero" ? "bg-accent text-white" : "bg-white text-ink border border-muted/30"}`}>Hero Photo</button>
         </div>
 
         {tab === "moderate" && <ModerationPanel />}
+        {tab === "portraits" && <StudentPortraitManager />}
         {tab === "photos" && <PhotoUploadForm students={students} />}
         {tab === "manage" && <PhotoManagementPanel students={students} />}
         {tab === "hero" && <HeroUploadForm />}
@@ -109,10 +94,9 @@ export default function AdminDashboardPage() {
               <label className="block font-body text-sm text-ink mb-1">Testimony</label>
               <textarea value={form.testimony} onChange={(e) => setForm({ ...form, testimony: e.target.value })} rows={4} className="w-full px-3 py-2 rounded-card border border-muted/30 font-body" />
             </div>
-            <div>
-              <label className="block font-body text-sm text-ink mb-1">Portrait URL</label>
-              <input value={form.portrait_url} onChange={(e) => setForm({ ...form, portrait_url: e.target.value })} placeholder="Or leave blank and use Upload Photos tab after" className="w-full min-h-[44px] px-3 rounded-card border border-muted/30 font-body text-sm" />
-            </div>
+            <p className="font-body text-xs text-muted">
+              Add the portrait photo afterward from the Portraits tab.
+            </p>
             <button type="submit" disabled={studentStatus === "saving"} className="btn-primary w-full disabled:active:scale-100">
               {studentStatus === "saving" ? "Saving..." : "Add Student"}
             </button>
