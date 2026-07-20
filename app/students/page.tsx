@@ -2,6 +2,7 @@ import { supabase } from "@/lib/supabase-client";
 import { StudentCard } from "@/components/StudentCard";
 import { SectionHeading } from "@/components/SectionHeading";
 import { ScrollFade } from "@/components/ScrollFade";
+import { BackButton } from "@/components/BackButton";
 import { Student } from "@/lib/types";
 
 export const revalidate = 0;
@@ -23,6 +24,7 @@ export default async function StudentsPage() {
 
   return (
     <main className="px-6 py-12 max-w-5xl mx-auto">
+      <BackButton />
       <SectionHeading subtitle="The Graduating Class">
         Our Students
       </SectionHeading>
