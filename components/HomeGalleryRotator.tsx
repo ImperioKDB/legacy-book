@@ -27,7 +27,7 @@ export function HomeGalleryRotator({ photos }: { photos: Photo[] }) {
     <section className="px-6 py-16 max-w-2xl mx-auto text-center">
       <h2 className="font-heading text-2xl text-ink mb-6">Moments from the Year</h2>
 
-      <div className="relative w-full aspect-[4/3] rounded-card overflow-hidden bg-ink shadow-[0_20px_50px_-20px_rgba(43,36,32,0.3)]">
+      <div className="relative w-full aspect-[4/3] rounded-card overflow-hidden shadow-[0_20px_50px_-20px_rgba(43,36,32,0.3)]">
         {photos.map((photo, i) => (
           <div
             key={photo.id}
@@ -35,11 +35,20 @@ export function HomeGalleryRotator({ photos }: { photos: Photo[] }) {
               i === index ? "opacity-100" : "opacity-0"
             }`}
           >
+            {/* Blurred fill layer — same photo, zoomed and blurred, sits behind */}
+            <Image
+              src={photo.image_url}
+              alt=""
+              aria-hidden="true"
+              fill
+              className="object-cover scale-110 blur-2xl brightness-75"
+            />
+            {/* Sharp full photo on top, never cropped */}
             <Image
               src={photo.image_url}
               alt={photo.caption ?? "Gallery photo"}
               fill
-              className="object-contain"
+              className="object-contain relative"
             />
           </div>
         ))}
@@ -49,14 +58,14 @@ export function HomeGalleryRotator({ photos }: { photos: Photo[] }) {
             <button
               onClick={() => goTo((index - 1 + photos.length) % photos.length)}
               aria-label="Previous photo"
-              className="absolute left-2 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/90 rounded-full flex items-center justify-center text-ink"
+              className="absolute left-2 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/90 rounded-full flex items-center justify-center text-ink z-10"
             >
               ‹
             </button>
             <button
               onClick={() => goTo((index + 1) % photos.length)}
               aria-label="Next photo"
-              className="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/90 rounded-full flex items-center justify-center text-ink"
+              className="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/90 rounded-full flex items-center justify-center text-ink z-10"
             >
               ›
             </button>
