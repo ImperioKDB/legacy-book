@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase-client";
 import { SectionHeading } from "@/components/SectionHeading";
 import { PhotoLightbox } from "@/components/PhotoLightbox";
+import { BackButton } from "@/components/BackButton";
 import { Photo } from "@/lib/types";
 
 export const revalidate = 0;
@@ -21,6 +22,7 @@ export default async function GalleryPage() {
 
   return (
     <main className="px-6 py-12 max-w-5xl mx-auto">
+      <BackButton />
       <SectionHeading subtitle="Moments from the year">Gallery</SectionHeading>
 
       {photos && photos.length > 0 ? (
