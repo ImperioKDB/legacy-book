@@ -55,7 +55,7 @@ export default async function Home() {
           <div className="mx-auto w-10 h-0.5 bg-accent mb-4" />
 
           <p className="font-body text-lg text-muted italic mb-4">
-            "For I know the plans I have for you..." — Jeremiah 29:11
+            "Ye are the light of the world... let your light so shine before men" — Matthew 5:13-16
           </p>
 
           <div className="flex items-center justify-center gap-2 mb-8">
