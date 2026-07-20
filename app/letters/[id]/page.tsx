@@ -1,6 +1,7 @@
 import { supabase } from "@/lib/supabase-client";
 import { notFound } from "next/navigation";
 import { Card } from "@/components/Card";
+import { BackButton } from "@/components/BackButton";
 import { Letter } from "@/lib/types";
 
 export const revalidate = 0;
@@ -30,6 +31,8 @@ export default async function LetterViewPage({
 
   return (
     <main className="px-6 py-12 max-w-xl mx-auto">
+      <BackButton label="Back" />
+
       <Card>
         {student?.full_name && (
           <p className="font-body text-sm text-muted mb-2">
