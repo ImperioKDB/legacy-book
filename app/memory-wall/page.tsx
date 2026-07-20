@@ -6,6 +6,7 @@ import { SectionHeading } from "@/components/SectionHeading";
 import { Card } from "@/components/Card";
 import { MemoryWallForm } from "@/components/MemoryWallForm";
 import { ScrollFade } from "@/components/ScrollFade";
+import { BackButton } from "@/components/BackButton";
 import { MemoryWallMessage } from "@/lib/types";
 
 export default function MemoryWallPage() {
@@ -30,6 +31,7 @@ export default function MemoryWallPage() {
 
   return (
     <main className="px-6 py-12 max-w-2xl mx-auto">
+      <BackButton />
       <SectionHeading subtitle="Words from those who love this class">
         Memory Wall
       </SectionHeading>
