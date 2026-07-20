@@ -7,9 +7,9 @@ export function SiteFooter() {
         <span className="text-bg text-lg">✦</span>
       </div>
       <p className="font-body text-bg/80 text-sm">
-        Made with love by the Luminaire Class
+        Made with love for the Luminaire Class
       </p>
-      <p className="mt-1 font-body text-bg/60 text-xs">TACSFON UNIBEN</p>
+      <p className="mt-1 font-body text-bg/60 text-xs">TACSFON UNIBEN/UBTH</p>
       <div className="mt-6 w-10 h-0.5 bg-bg/40 mx-auto" />
       <p className="mt-4 font-body text-bg/60 text-xs italic">
         &quot;            Ye are the salt of the earth: but if the salt have lost his savour, wherewith shall it be salted? it is thenceforth good for nothing, but to be cast out, and to be trodden under foot of men.
