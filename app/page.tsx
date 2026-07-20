@@ -63,7 +63,7 @@ export default async function Home() {
             Ye are the salt of the earth: but if the salt have lost his savour, wherewith shall it be salted? it is thenceforth good for nothing, but to be cast out, and to be trodden under foot of men.
 ​Ye are the light of the world. A city that is set on an hill cannot be hid.
 ​Neither do men light a candle, and put it under a bushel, but on a candlestick; and it giveth light unto all that are in the house.
-​Let your light so shine before men, that they may see your good works, and glorify your Father which is in heaven.
+​Let your light so shine before men, that they may see your good works, and glorify your Father which is in heaven. (Matthew 5:13-16)
           </p>
 
           <div className="flex items-center justify-center gap-2 mb-8">
