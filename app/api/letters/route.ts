@@ -1,6 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase-server";
 
+function normalizeNameForComparison(name: string): string {
+  return name
+    .trim()
+    .toLowerCase()
+    .split(/\s+/)
+    .filter(Boolean)
+    .sort()
+    .join(" ");
+}
+
 export async function POST(req: NextRequest) {
   const body = await req.json();
   const { full_name, letter_text, unlock_date } = body;
@@ -12,7 +22,7 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  const typedName = full_name.trim();
+  const normalizedInput = normalizeNameForComparison(full_name);
 
   const { data: students } = await supabaseServer
     .from("students")
@@ -20,7 +30,7 @@ export async function POST(req: NextRequest) {
     .eq("approved", true);
 
   const match = (students ?? []).find(
-    (s) => s.full_name.trim().toLowerCase() === typedName.toLowerCase()
+    (s) => normalizeNameForComparison(s.full_name) === normalizedInput
   );
 
   if (!match) {
