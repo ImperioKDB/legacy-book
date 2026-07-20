@@ -1,7 +1,10 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { MemoryWallMessage } from "@/lib/types";
+
+const MAX_PREVIEW_LENGTH = 180;
 
 export function HomeMemoryRotator({ messages }: { messages: MemoryWallMessage[] }) {
   const [index, setIndex] = useState(0);
@@ -26,20 +29,35 @@ export function HomeMemoryRotator({ messages }: { messages: MemoryWallMessage[] 
     <section className="px-6 py-16 max-w-xl mx-auto text-center">
       <h2 className="font-heading text-2xl text-ink mb-6">Words of Love</h2>
 
-      <div className="relative min-h-[180px] flex items-center justify-center">
-        {messages.map((msg, i) => (
-          <div
-            key={msg.id}
-            className={`absolute inset-0 transition-opacity duration-700 motion-reduce:transition-none flex flex-col items-center justify-center bg-surface rounded-card shadow-sm p-6 ${
-              i === index ? "opacity-100" : "opacity-0 pointer-events-none"
-            }`}
-          >
-            <p className="font-body text-ink text-lg italic leading-relaxed">
-              &quot;{msg.message}&quot;
-            </p>
-            <p className="font-body text-sm text-muted mt-4">— {msg.author_name}</p>
-          </div>
-        ))}
+      <div className="relative min-h-[220px]">
+        {messages.map((msg, i) => {
+          const isLong = msg.message.length > MAX_PREVIEW_LENGTH;
+          const preview = isLong
+            ? msg.message.slice(0, MAX_PREVIEW_LENGTH).trimEnd() + "…"
+            : msg.message;
+
+          return (
+            <div
+              key={msg.id}
+              className={`absolute inset-0 transition-opacity duration-700 motion-reduce:transition-none flex flex-col items-center justify-center bg-surface rounded-card shadow-sm px-6 py-8 ${
+                i === index ? "opacity-100" : "opacity-0 pointer-events-none"
+              }`}
+            >
+              <p className="font-body text-ink text-lg italic leading-relaxed max-w-sm mx-auto break-words">
+                &quot;{preview}&quot;
+              </p>
+              <p className="font-body text-sm text-muted mt-4">— {msg.author_name}</p>
+              {isLong && (
+                <Link
+                  href="/memory-wall"
+                  className="font-body text-xs text-accent underline mt-2"
+                >
+                  Read full message
+                </Link>
+              )}
+            </div>
+          );
+        })}
       </div>
 
       {messages.length > 1 && (
@@ -47,14 +65,14 @@ export function HomeMemoryRotator({ messages }: { messages: MemoryWallMessage[] 
           <button
             onClick={() => goTo((index - 1 + messages.length) % messages.length)}
             aria-label="Previous message"
-            className="w-9 h-9 flex items-center justify-center text-accent"
+            className="w-10 h-10 bg-surface shadow-sm rounded-full flex items-center justify-center text-accent"
           >
             ‹
           </button>
           <button
             onClick={() => goTo((index + 1) % messages.length)}
             aria-label="Next message"
-            className="w-9 h-9 flex items-center justify-center text-accent"
+            className="w-10 h-10 bg-surface shadow-sm rounded-full flex items-center justify-center text-accent"
           >
             ›
           </button>
