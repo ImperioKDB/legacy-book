@@ -24,7 +24,7 @@ export function SiteNav() {
 
   return (
     <>
-      <nav className="sticky top-0 z-40 bg-bg/95 backdrop-blur border-b border-accent-soft">
+      <nav className="sticky top-0 z-40 bg-bg/95 backdrop-blur border-b-2 border-accent">
         <div className="max-w-5xl mx-auto px-6 h-16 flex items-center justify-between">
           <Link href="/" className="flex items-center">
             <div className="relative w-14 h-14 shrink-0">
