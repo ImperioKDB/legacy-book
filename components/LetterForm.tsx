@@ -1,33 +1,38 @@
 "use client";
 
 import { useState } from "react";
-import { supabase } from "@/lib/supabase-client";
-import { Student } from "@/lib/types";
 
-export function LetterForm({ students }: { students: Student[] }) {
-  const [studentId, setStudentId] = useState("");
+export function LetterForm() {
+  const [fullName, setFullName] = useState("");
   const [letterText, setLetterText] = useState("");
   const [unlockDate, setUnlockDate] = useState("");
   const [status, setStatus] = useState<"idle" | "saving" | "done" | "error">("idle");
+  const [errorMsg, setErrorMsg] = useState("");
 
   const today = new Date().toISOString().split("T")[0];
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setStatus("saving");
+    setErrorMsg("");
 
-    const { error } = await supabase.from("letters").insert({
-      student_id: studentId,
-      letter_text: letterText,
-      unlock_date: unlockDate,
+    const res = await fetch("/api/letters", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        full_name: fullName,
+        letter_text: letterText,
+        unlock_date: unlockDate,
+      }),
     });
 
-    if (error) {
+    if (res.ok) {
+      setStatus("done");
+    } else {
+      const json = await res.json();
+      setErrorMsg(json.error ?? "Something went wrong.");
       setStatus("error");
-      return;
     }
-
-    setStatus("done");
   }
 
   if (status === "done") {
@@ -43,22 +48,17 @@ export function LetterForm({ students }: { students: Student[] }) {
   return (
     <form onSubmit={handleSubmit} className="bg-surface rounded-card shadow-sm p-6 space-y-4">
       <div>
-        <label className="block font-body text-sm text-ink mb-1">Which profile is this for? *</label>
-        <select
+        <label className="block font-body text-sm text-ink mb-1">Your Full Name *</label>
+        <input
           required
-          value={studentId}
-          onChange={(e) => setStudentId(e.target.value)}
-          className="w-full min-h-[44px] px-3 rounded-card border border-muted/30 font-body bg-white"
-        >
-          <option value="" disabled>
-            Select your name
-          </option>
-          {students.map((s) => (
-            <option key={s.id} value={s.id}>
-              {s.full_name}
-            </option>
-          ))}
-        </select>
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
+          placeholder="Exactly as it appears on your profile"
+          className="w-full min-h-[44px] px-3 rounded-card border border-muted/30 font-body"
+        />
+        <p className="font-body text-xs text-muted mt-1">
+          Only Final Year Brethren can use this form.
+        </p>
       </div>
 
       <div>
@@ -88,15 +88,15 @@ export function LetterForm({ students }: { students: Student[] }) {
       </div>
 
       {status === "error" && (
-        <p className="font-body text-sm text-red-600">
-          Something went wrong — please try again.
-        </p>
+        <div className="bg-red-50 border border-red-200 rounded-card p-3">
+          <p className="font-body text-sm text-red-700">{errorMsg}</p>
+        </div>
       )}
 
       <button
         type="submit"
         disabled={status === "saving"}
-        className="w-full bg-accent text-white font-body font-medium min-h-[44px] rounded-card disabled:opacity-50"
+        className="btn-primary w-full disabled:active:scale-100"
       >
         {status === "saving" ? "Saving..." : "Save My Letter"}
       </button>
