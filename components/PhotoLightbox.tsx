@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import Image from "next/image";
 import { Photo } from "@/lib/types";
 
 export function PhotoLightbox({ photos }: { photos: Photo[] }) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [loadedIds, setLoadedIds] = useState<Set<string>>(new Set());
+  const touchStartX = useRef<number | null>(null);
 
   function close() {
     setActiveIndex(null);
@@ -21,6 +23,30 @@ export function PhotoLightbox({ photos }: { photos: Photo[] }) {
     setActiveIndex((activeIndex - 1 + photos.length) % photos.length);
   }
 
+  function markLoaded(id: string) {
+    setLoadedIds((prev) => new Set(prev).add(id));
+  }
+
+  function handleTouchStart(e: React.TouchEvent) {
+    touchStartX.current = e.touches[0].clientX;
+  }
+
+  function handleTouchEnd(e: React.TouchEvent) {
+    if (touchStartX.current === null) return;
+    const deltaX = e.changedTouches[0].clientX - touchStartX.current;
+    const SWIPE_THRESHOLD = 50;
+
+    if (deltaX > SWIPE_THRESHOLD) {
+      prev();
+    } else if (deltaX < -SWIPE_THRESHOLD) {
+      next();
+    }
+    touchStartX.current = null;
+  }
+
+  const activePhoto = activeIndex !== null ? photos[activeIndex] : null;
+  const isLoaded = activePhoto ? loadedIds.has(activePhoto.id) : false;
+
   return (
     <>
       <div className="columns-2 md:columns-3 gap-3 space-y-3">
@@ -28,7 +54,7 @@ export function PhotoLightbox({ photos }: { photos: Photo[] }) {
           <button
             key={photo.id}
             onClick={() => setActiveIndex(i)}
-            className="block w-full rounded-card overflow-hidden bg-accent-soft break-inside-avoid animate-fade-up"
+            className="block w-full rounded-card overflow-hidden bg-accent-soft break-inside-avoid"
           >
             <Image
               src={photo.image_url}
@@ -41,33 +67,54 @@ export function PhotoLightbox({ photos }: { photos: Photo[] }) {
         ))}
       </div>
 
-      {activeIndex !== null && (
+      {activePhoto && (
         <div
-          className="fixed inset-0 z-50 bg-black/70 flex items-center justify-center px-4 animate-fade-up"
-          style={{ animationDuration: "0.2s" }}
+          className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center px-4"
+          style={{ height: "100dvh", width: "100vw" }}
           onClick={close}
+          onTouchStart={handleTouchStart}
+          onTouchEnd={handleTouchEnd}
         >
           <div
             className="relative max-w-lg w-full"
             onClick={(e) => e.stopPropagation()}
           >
+            {/* Skeleton — visible immediately, before the full image loads */}
+            <div
+              className={`w-full aspect-square rounded-card bg-white/10 animate-pulse transition-opacity duration-300 ${
+                isLoaded ? "opacity-0 absolute inset-0" : "opacity-100"
+              }`}
+            />
+
+            {/* Real image — fades in on top once loaded, never shown as a sudden pop */}
             <Image
-              src={photos[activeIndex].image_url}
-              alt={photos[activeIndex].caption ?? "Gallery photo"}
+              key={activePhoto.id}
+              src={activePhoto.image_url}
+              alt={activePhoto.caption ?? "Gallery photo"}
               width={800}
               height={800}
-              className="w-full h-auto rounded-card"
+              onLoad={() => markLoaded(activePhoto.id)}
+              className={`w-full h-auto rounded-card transition-opacity duration-300 ${
+                isLoaded ? "opacity-100" : "opacity-0"
+              }`}
             />
-            {photos[activeIndex].caption && (
+
+            {isLoaded && activePhoto.caption && (
               <p className="font-body text-white text-sm text-center mt-3">
-                {photos[activeIndex].caption}
+                {activePhoto.caption}
+              </p>
+            )}
+
+            {isLoaded && (
+              <p className="font-body text-white/60 text-xs text-center mt-2">
+                {activeIndex! + 1} of {photos.length}
               </p>
             )}
 
             <button
               onClick={close}
               aria-label="Close"
-              className="absolute -top-3 -right-3 w-11 h-11 bg-white rounded-full flex items-center justify-center text-ink font-bold"
+              className="absolute -top-3 -right-3 w-11 h-11 bg-white rounded-full flex items-center justify-center text-ink font-bold z-10"
             >
               ✕
             </button>
@@ -77,14 +124,14 @@ export function PhotoLightbox({ photos }: { photos: Photo[] }) {
                 <button
                   onClick={prev}
                   aria-label="Previous photo"
-                  className="absolute left-2 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/90 rounded-full flex items-center justify-center text-ink"
+                  className="absolute left-2 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/90 rounded-full flex items-center justify-center text-ink z-10"
                 >
                   ‹
                 </button>
                 <button
                   onClick={next}
                   aria-label="Next photo"
-                  className="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/90 rounded-full flex items-center justify-center text-ink"
+                  className="absolute right-2 top-1/2 -translate-y-1/2 w-11 h-11 bg-white/90 rounded-full flex items-center justify-center text-ink z-10"
                 >
                   ›
                 </button>
