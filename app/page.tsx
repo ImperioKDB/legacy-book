@@ -12,26 +12,21 @@ export default async function Home() {
   const { data: allPhotos } = await supabase
     .from("photos")
     .select("*")
-    .order("created_at", { ascending: false })
-    .limit(50);
+    .order("created_at", { ascending: false });
 
   const { data: allMessages } = await supabase
     .from("memory_wall")
     .select("*")
     .eq("approved", true)
-    .order("created_at", { ascending: false })
-    .limit(30);
+    .order("created_at", { ascending: false });
 
   const { count: studentCount } = await supabase
     .from("students")
     .select("id", { count: "exact", head: true })
     .eq("approved", true);
 
-  const shuffledPhotos = [...(allPhotos ?? [])].sort(() => Math.random() - 0.5);
-  const photos = shuffledPhotos.slice(0, 16);
-
-  const shuffledMessages = [...(allMessages ?? [])].sort(() => Math.random() - 0.5);
-  const messages = shuffledMessages.slice(0, 10);
+  const photos = [...(allPhotos ?? [])].sort(() => Math.random() - 0.5);
+  const messages = [...(allMessages ?? [])].sort(() => Math.random() - 0.5);
 
   return (
     <>
@@ -60,10 +55,7 @@ export default async function Home() {
           <div className="mx-auto w-10 h-0.5 bg-accent mb-4" />
 
           <p className="font-body text-lg text-muted italic mb-4">
-            Ye are the salt of the earth: but if the salt have lost his savour, wherewith shall it be salted? it is thenceforth good for nothing, but to be cast out, and to be trodden under foot of men.
-​Ye are the light of the world. A city that is set on an hill cannot be hid.
-​Neither do men light a candle, and put it under a bushel, but on a candlestick; and it giveth light unto all that are in the house.
-​Let your light so shine before men, that they may see your good works, and glorify your Father which is in heaven. (Matthew 5:13-16)
+            "For I know the plans I have for you..." — Jeremiah 29:11
           </p>
 
           <div className="flex items-center justify-center gap-2 mb-8">
