@@ -3,7 +3,8 @@ export function SiteFooter() {
     <footer className="bg-accent text-bg py-10 px-6 text-center mt-12">
       <div className="flex justify-center items-center gap-2 mb-3">
         <span className="text-bg text-lg">✦</span>
-        <span className="font-heading text-xl">The Legacy Book</span>
+        <span className="font-heading text-xl">The Legacy Book
+Final Year Brethren, 2026</span>
         <span className="text-bg text-lg">✦</span>
       </div>
       <p className="font-body text-bg/80 text-sm">
