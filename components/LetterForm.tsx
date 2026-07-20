@@ -53,7 +53,7 @@ export function LetterForm() {
           required
           value={fullName}
           onChange={(e) => setFullName(e.target.value)}
-          placeholder="Exactly as it appears on your profile"
+          placeholder="Type your full name"
           className="w-full min-h-[44px] px-3 rounded-card border border-muted/30 font-body"
         />
         <p className="font-body text-xs text-muted mt-1">
