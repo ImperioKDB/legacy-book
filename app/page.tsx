@@ -66,10 +66,16 @@ export default async function Home() {
             <span className="text-accent text-sm">✦</span>
           </div>
 
-          <Link href="/students" className="btn-hero">
-            Meet the Class
-            <span aria-hidden="true">→</span>
-          </Link>
+          <div className="flex flex-col items-center gap-3">
+            <Link href="/students" className="btn-hero">
+              Meet the Class
+              <span aria-hidden="true">→</span>
+            </Link>
+            <Link href="/gallery" className="btn-hero-outline">
+              View Gallery
+              <span aria-hidden="true">→</span>
+            </Link>
+          </div>
 
           {typeof studentCount === "number" && studentCount > 0 && (
             <p className="font-body text-muted text-xs mt-3">
