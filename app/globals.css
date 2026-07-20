@@ -25,4 +25,10 @@ body {
            active:scale-[0.97] active:shadow-[0_4px_12px_-4px_rgba(107,39,55,0.5)]
            transition-all duration-200;
   }
+  .btn-hero-outline {
+    @apply inline-flex items-center gap-2 bg-transparent text-accent font-body font-medium
+           min-h-[52px] px-8 rounded-full tracking-wide border-2 border-accent
+           active:scale-[0.97] active:bg-accent/10
+           transition-all duration-200;
+  }
 }
