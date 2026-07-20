@@ -1,6 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase-client";
+import { supabaseServer } from "@/lib/supabase-server";
 import { HomeGalleryRotator } from "@/components/HomeGalleryRotator";
 import { HomeMemoryRotator } from "@/components/HomeMemoryRotator";
 import { ScrollFade } from "@/components/ScrollFade";
@@ -25,6 +26,14 @@ export default async function Home() {
     .select("id", { count: "exact", head: true })
     .eq("approved", true);
 
+  const { data: heroFiles } = await supabaseServer.storage
+    .from("legacy-book-assets")
+    .list("site");
+
+  const heroFile = heroFiles?.find((f) => f.name === "hero.jpg");
+  const heroVersion = heroFile?.updated_at ? new Date(heroFile.updated_at).getTime() : Date.now();
+  const heroUrl = `https://gwxiwvpqmcrkrdiqaokp.supabase.co/storage/v1/object/public/legacy-book-assets/site/hero.jpg?v=${heroVersion}`;
+
   const photos = [...(allPhotos ?? [])].sort(() => Math.random() - 0.5);
   const messages = [...(allMessages ?? [])].sort(() => Math.random() - 0.5);
 
@@ -36,11 +45,12 @@ export default async function Home() {
             <div className="bg-surface p-3 pb-7 rounded-card shadow-[0_20px_50px_-20px_rgba(43,36,32,0.4)] -rotate-1">
               <div className="relative w-full aspect-[4/3] rounded-lg overflow-hidden bg-accent-soft">
                 <Image
-                  src="https://gwxiwvpqmcrkrdiqaokp.supabase.co/storage/v1/object/public/legacy-book-assets/site/hero.jpg"
+                  src={heroUrl}
                   alt="Graduating class"
                   fill
                   className="object-cover"
                   priority
+                  unoptimized
                 />
               </div>
               <p className="text-center text-xs text-muted mt-3 font-body italic">
@@ -55,7 +65,7 @@ export default async function Home() {
           <div className="mx-auto w-10 h-0.5 bg-accent mb-4" />
 
           <p className="font-body text-lg text-muted italic mb-4">
-            "Ye are the light of the world... let your light so shine before men" — Matthew 5:14-16
+            "Ye are the light of the world... let your light so shine before men" — Matthew 5:13-16
           </p>
 
           <div className="flex items-center justify-center gap-2 mb-8">
