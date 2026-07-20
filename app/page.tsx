@@ -2,8 +2,9 @@ import Link from "next/link";
 import Image from "next/image";
 import { supabase } from "@/lib/supabase-client";
 import { HomeGalleryRotator } from "@/components/HomeGalleryRotator";
+import { HomeMemoryRotator } from "@/components/HomeMemoryRotator";
 import { ScrollFade } from "@/components/ScrollFade";
-import { Photo } from "@/lib/types";
+import { Photo, MemoryWallMessage } from "@/lib/types";
 
 export const revalidate = 0;
 
@@ -14,13 +15,23 @@ export default async function Home() {
     .order("created_at", { ascending: false })
     .limit(50);
 
+  const { data: allMessages } = await supabase
+    .from("memory_wall")
+    .select("*")
+    .eq("approved", true)
+    .order("created_at", { ascending: false })
+    .limit(30);
+
   const { count: studentCount } = await supabase
     .from("students")
     .select("id", { count: "exact", head: true })
     .eq("approved", true);
 
-  const shuffled = [...(allPhotos ?? [])].sort(() => Math.random() - 0.5);
-  const photos = shuffled.slice(0, 16);
+  const shuffledPhotos = [...(allPhotos ?? [])].sort(() => Math.random() - 0.5);
+  const photos = shuffledPhotos.slice(0, 16);
+
+  const shuffledMessages = [...(allMessages ?? [])].sort(() => Math.random() - 0.5);
+  const messages = shuffledMessages.slice(0, 10);
 
   return (
     <>
@@ -75,7 +86,13 @@ export default async function Home() {
 
       <div className="bg-surface">
         <ScrollFade>
-          <HomeGalleryRotator photos={(photos as Photo[]) ?? []} />
+          <HomeGalleryRotator photos={photos as Photo[]} />
+        </ScrollFade>
+      </div>
+
+      <div className="bg-bg">
+        <ScrollFade>
+          <HomeMemoryRotator messages={messages as MemoryWallMessage[]} />
         </ScrollFade>
       </div>
     </>
