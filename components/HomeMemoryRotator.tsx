@@ -4,7 +4,17 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { MemoryWallMessage } from "@/lib/types";
 
-const MAX_PREVIEW_LENGTH = 180;
+const MAX_PREVIEW_LENGTH = 140;
+
+function truncateAtWord(text: string, maxLength: number): { preview: string; wasTruncated: boolean } {
+  if (text.length <= maxLength) {
+    return { preview: text, wasTruncated: false };
+  }
+  const cut = text.slice(0, maxLength);
+  const lastSpace = cut.lastIndexOf(" ");
+  const safeCut = lastSpace > 0 ? cut.slice(0, lastSpace) : cut;
+  return { preview: safeCut.trimEnd() + "…", wasTruncated: true };
+}
 
 export function HomeMemoryRotator({ messages }: { messages: MemoryWallMessage[] }) {
   const [index, setIndex] = useState(0);
@@ -29,28 +39,25 @@ export function HomeMemoryRotator({ messages }: { messages: MemoryWallMessage[] 
     <section className="px-6 py-16 max-w-xl mx-auto text-center">
       <h2 className="font-heading text-2xl text-ink mb-6">Words of Love</h2>
 
-      <div className="relative min-h-[220px]">
+      <div className="relative h-64 overflow-hidden">
         {messages.map((msg, i) => {
-          const isLong = msg.message.length > MAX_PREVIEW_LENGTH;
-          const preview = isLong
-            ? msg.message.slice(0, MAX_PREVIEW_LENGTH).trimEnd() + "…"
-            : msg.message;
+          const { preview, wasTruncated } = truncateAtWord(msg.message, MAX_PREVIEW_LENGTH);
 
           return (
             <div
               key={msg.id}
-              className={`absolute inset-0 transition-opacity duration-700 motion-reduce:transition-none flex flex-col items-center justify-center bg-surface rounded-card shadow-sm px-6 py-8 ${
+              className={`absolute inset-0 transition-opacity duration-700 motion-reduce:transition-none flex flex-col items-center justify-center bg-surface rounded-card shadow-sm px-6 py-6 overflow-hidden ${
                 i === index ? "opacity-100" : "opacity-0 pointer-events-none"
               }`}
             >
-              <p className="font-body text-ink text-lg italic leading-relaxed max-w-sm mx-auto break-words">
+              <p className="font-body text-ink text-base italic leading-relaxed max-w-sm mx-auto break-words line-clamp-4">
                 &quot;{preview}&quot;
               </p>
-              <p className="font-body text-sm text-muted mt-4">— {msg.author_name}</p>
-              {isLong && (
+              <p className="font-body text-sm text-muted mt-3 shrink-0">— {msg.author_name}</p>
+              {wasTruncated && (
                 <Link
                   href="/memory-wall"
-                  className="font-body text-xs text-accent underline mt-2"
+                  className="font-body text-xs text-accent underline mt-1 shrink-0"
                 >
                   Read full message
                 </Link>
