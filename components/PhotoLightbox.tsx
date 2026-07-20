@@ -79,37 +79,44 @@ export function PhotoLightbox({ photos }: { photos: Photo[] }) {
             className="relative max-w-lg w-full"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Skeleton — visible immediately, before the full image loads */}
-            <div
-              className={`w-full aspect-square rounded-card bg-white/10 animate-pulse transition-opacity duration-300 ${
-                isLoaded ? "opacity-0 absolute inset-0" : "opacity-100"
-              }`}
-            />
+            <div className="relative w-full rounded-card overflow-hidden">
+              {/* Same photo, small size — likely already cached from the grid,
+                  so it appears near-instantly and gives visual continuity
+                  instead of a blank stall. */}
+              <Image
+                src={activePhoto.image_url}
+                alt=""
+                aria-hidden="true"
+                width={40}
+                height={40}
+                className={`w-full h-auto blur-xl scale-105 transition-opacity duration-500 ${
+                  isLoaded ? "opacity-0" : "opacity-100"
+                }`}
+              />
 
-            {/* Real image — fades in on top once loaded, never shown as a sudden pop */}
-            <Image
-              key={activePhoto.id}
-              src={activePhoto.image_url}
-              alt={activePhoto.caption ?? "Gallery photo"}
-              width={800}
-              height={800}
-              onLoad={() => markLoaded(activePhoto.id)}
-              className={`w-full h-auto rounded-card transition-opacity duration-300 ${
-                isLoaded ? "opacity-100" : "opacity-0"
-              }`}
-            />
+              {/* Full-resolution photo, fades in sharp on top once ready */}
+              <Image
+                key={activePhoto.id}
+                src={activePhoto.image_url}
+                alt={activePhoto.caption ?? "Gallery photo"}
+                width={800}
+                height={800}
+                onLoad={() => markLoaded(activePhoto.id)}
+                className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-500 ${
+                  isLoaded ? "opacity-100" : "opacity-0"
+                }`}
+              />
+            </div>
 
-            {isLoaded && activePhoto.caption && (
+            {activePhoto.caption && (
               <p className="font-body text-white text-sm text-center mt-3">
                 {activePhoto.caption}
               </p>
             )}
 
-            {isLoaded && (
-              <p className="font-body text-white/60 text-xs text-center mt-2">
-                {activeIndex! + 1} of {photos.length}
-              </p>
-            )}
+            <p className="font-body text-white/60 text-xs text-center mt-2">
+              {activeIndex! + 1} of {photos.length}
+            </p>
 
             <button
               onClick={close}
