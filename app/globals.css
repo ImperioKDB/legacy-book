@@ -32,3 +32,45 @@ body {
            transition-all duration-200;
   }
 }
+
+/* Native CSS scroll-driven scaling for the gallery strips.
+   Items scale up and brighten as they center in the horizontal
+   scroll container. Pure CSS, no scroll event listeners — avoids
+   the performance risk a JS scroll handler would add.
+
+   Progressive enhancement: browsers that don't support
+   animation-timeline simply ignore it, and the animation falls
+   back to a harmless one-time fade-in on page load instead. */
+.gallery-scroll-strip {
+  scroll-timeline-name: --gallery-strip;
+  scroll-timeline-axis: inline;
+}
+
+.gallery-scroll-item {
+  animation: gallery-item-scale 1s ease-in-out;
+  animation-timeline: --gallery-strip;
+  animation-range: contain 0% contain 100%;
+}
+
+@keyframes gallery-item-scale {
+  0% {
+    transform: scale(0.88);
+    filter: brightness(0.85);
+  }
+  50% {
+    transform: scale(1);
+    filter: brightness(1);
+  }
+  100% {
+    transform: scale(0.88);
+    filter: brightness(0.85);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery-scroll-item {
+    animation: none;
+    transform: none;
+    filter: none;
+  }
+}
