@@ -1,37 +1,29 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabaseServer } from "@/lib/supabase-server";
 
-function normalizeNameForComparison(name: string): string {
-  return name
-    .trim()
-    .toLowerCase()
-    .split(/\s+/)
-    .filter(Boolean)
-    .sort()
-    .join(" ");
-}
-
 export async function POST(req: NextRequest) {
   const body = await req.json();
-  const { full_name, letter_text, unlock_date } = body;
+  const { full_name, letter_text, unlock_date, contact_number, email } = body;
 
-  if (!full_name || !letter_text || !unlock_date) {
+  if (!full_name || !letter_text || !unlock_date || !contact_number || !email) {
     return NextResponse.json(
-      { error: "All fields are required." },
+      { error: "All fields are required, including contact number and email." },
       { status: 400 }
     );
   }
 
-  const normalizedInput = normalizeNameForComparison(full_name);
+  function normalize(name: string) {
+    return name.trim().toLowerCase().split(/\s+/).filter(Boolean).sort().join(" ");
+  }
+
+  const typedName = normalize(full_name);
 
   const { data: students } = await supabaseServer
     .from("students")
     .select("id, full_name")
     .eq("approved", true);
 
-  const match = (students ?? []).find(
-    (s) => normalizeNameForComparison(s.full_name) === normalizedInput
-  );
+  const match = (students ?? []).find((s) => normalize(s.full_name) === typedName);
 
   if (!match) {
     return NextResponse.json(
@@ -47,6 +39,9 @@ export async function POST(req: NextRequest) {
     student_id: match.id,
     letter_text,
     unlock_date,
+    contact_number,
+    email,
+    approved: false,
   });
 
   if (error) {
