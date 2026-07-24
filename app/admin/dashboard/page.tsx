@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { AdminGate } from "@/components/AdminGate";
 import { ModerationPanel } from "@/components/ModerationPanel";
 import { PublishedMemoryWallPanel } from "@/components/PublishedMemoryWallPanel";
+import { LetterApprovalPanel } from "@/components/LetterApprovalPanel";
 import { PhotoUploadForm } from "@/components/PhotoUploadForm";
 import { PhotoManagementPanel } from "@/components/PhotoManagementPanel";
 import { StudentPortraitManager } from "@/components/StudentPortraitManager";
@@ -12,7 +13,7 @@ import { HeroUploadForm } from "@/components/HeroUploadForm";
 import { supabase } from "@/lib/supabase-client";
 import { Student } from "@/lib/types";
 
-type Tab = "students" | "manageStudents" | "portraits" | "moderate" | "wall" | "photos" | "manage" | "hero";
+type Tab = "students" | "manageStudents" | "portraits" | "moderate" | "wall" | "letters" | "photos" | "manage" | "hero";
 
 export default function AdminDashboardPage() {
   const [tab, setTab] = useState<Tab>("moderate");
@@ -66,6 +67,7 @@ export default function AdminDashboardPage() {
         <div className="flex gap-2 mb-6 overflow-x-auto">
           <button onClick={() => setTab("moderate")} className={`px-4 py-2 rounded-card font-body text-sm whitespace-nowrap min-h-[44px] ${tab === "moderate" ? "bg-accent text-white" : "bg-white text-ink border border-muted/30"}`}>Moderate Wall</button>
           <button onClick={() => setTab("wall")} className={`px-4 py-2 rounded-card font-body text-sm whitespace-nowrap min-h-[44px] ${tab === "wall" ? "bg-accent text-white" : "bg-white text-ink border border-muted/30"}`}>Manage Wall</button>
+          <button onClick={() => setTab("letters")} className={`px-4 py-2 rounded-card font-body text-sm whitespace-nowrap min-h-[44px] ${tab === "letters" ? "bg-accent text-white" : "bg-white text-ink border border-muted/30"}`}>Confirm Letters</button>
           <button onClick={() => setTab("students")} className={`px-4 py-2 rounded-card font-body text-sm whitespace-nowrap min-h-[44px] ${tab === "students" ? "bg-accent text-white" : "bg-white text-ink border border-muted/30"}`}>Add Student</button>
           <button onClick={() => setTab("manageStudents")} className={`px-4 py-2 rounded-card font-body text-sm whitespace-nowrap min-h-[44px] ${tab === "manageStudents" ? "bg-accent text-white" : "bg-white text-ink border border-muted/30"}`}>Manage Students</button>
           <button onClick={() => setTab("portraits")} className={`px-4 py-2 rounded-card font-body text-sm whitespace-nowrap min-h-[44px] ${tab === "portraits" ? "bg-accent text-white" : "bg-white text-ink border border-muted/30"}`}>Portraits</button>
@@ -76,6 +78,7 @@ export default function AdminDashboardPage() {
 
         {tab === "moderate" && <ModerationPanel />}
         {tab === "wall" && <PublishedMemoryWallPanel />}
+        {tab === "letters" && <LetterApprovalPanel />}
         {tab === "manageStudents" && <StudentManagementPanel />}
         {tab === "portraits" && <StudentPortraitManager />}
         {tab === "photos" && <PhotoUploadForm students={students} />}
