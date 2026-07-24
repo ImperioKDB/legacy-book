@@ -1,10 +1,13 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { Photo } from "@/lib/types";
 
-export function PhotoLightbox({ photos }: { photos: Photo[] }) {
+const QUILT_WIDTHS = ["w-36", "w-52", "w-44", "w-60", "w-40"];
+
+export function PhotoLightbox({ groups }: { groups: Photo[][] }) {
+  const photos = groups.flat();
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [loadedIds, setLoadedIds] = useState<Set<string>>(new Set());
   const touchStartX = useRef<number | null>(null);
@@ -14,13 +17,11 @@ export function PhotoLightbox({ photos }: { photos: Photo[] }) {
   }
 
   function next() {
-    if (activeIndex === null) return;
-    setActiveIndex((activeIndex + 1) % photos.length);
+    setActiveIndex((i) => (i === null ? null : (i + 1) % photos.length));
   }
 
   function prev() {
-    if (activeIndex === null) return;
-    setActiveIndex((activeIndex - 1 + photos.length) % photos.length);
+    setActiveIndex((i) => (i === null ? null : (i - 1 + photos.length) % photos.length));
   }
 
   function markLoaded(id: string) {
@@ -35,36 +36,65 @@ export function PhotoLightbox({ photos }: { photos: Photo[] }) {
     if (touchStartX.current === null) return;
     const deltaX = e.changedTouches[0].clientX - touchStartX.current;
     const SWIPE_THRESHOLD = 50;
-
-    if (deltaX > SWIPE_THRESHOLD) {
-      prev();
-    } else if (deltaX < -SWIPE_THRESHOLD) {
-      next();
-    }
+    if (deltaX > SWIPE_THRESHOLD) prev();
+    else if (deltaX < -SWIPE_THRESHOLD) next();
     touchStartX.current = null;
   }
+
+  useEffect(() => {
+    if (activeIndex === null) return;
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "ArrowLeft") prev();
+      else if (e.key === "ArrowRight") next();
+      else if (e.key === "Escape") close();
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [activeIndex]);
 
   const activePhoto = activeIndex !== null ? photos[activeIndex] : null;
   const isLoaded = activePhoto ? loadedIds.has(activePhoto.id) : false;
 
+  const nextPhoto =
+    activeIndex !== null && photos.length > 1 ? photos[(activeIndex + 1) % photos.length] : null;
+  const prevPhoto =
+    activeIndex !== null && photos.length > 1
+      ? photos[(activeIndex - 1 + photos.length) % photos.length]
+      : null;
+
+  let runningIndex = 0;
+
   return (
     <>
-      <div className="columns-2 md:columns-3 gap-3 space-y-3">
-        {photos.map((photo, i) => (
-          <button
-            key={photo.id}
-            onClick={() => setActiveIndex(i)}
-            className="block w-full rounded-card overflow-hidden bg-accent-soft break-inside-avoid"
-          >
-            <Image
-              src={photo.image_url}
-              alt={photo.caption ?? "Gallery photo"}
-              width={400}
-              height={400}
-              className="w-full h-auto object-cover"
-            />
-          </button>
-        ))}
+      <div className="space-y-8">
+        {groups.map((group, groupIdx) => {
+          const startIndex = runningIndex;
+          runningIndex += group.length;
+
+          return (
+            <div
+              key={groupIdx}
+              className="gallery-scroll-strip flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-6 px-6"
+            >
+              {group.map((photo, i) => (
+                <button
+                  key={photo.id}
+                  onClick={() => setActiveIndex(startIndex + i)}
+                  className={`gallery-scroll-item relative shrink-0 h-52 ${QUILT_WIDTHS[i % QUILT_WIDTHS.length]} snap-center rounded-card overflow-hidden bg-accent-soft active:scale-[0.96] transition-transform duration-150`}
+                >
+                  <Image
+                    src={photo.image_url}
+                    alt={photo.caption ?? "Gallery photo"}
+                    fill
+                    className="object-cover"
+                  />
+                </button>
+              ))}
+            </div>
+          );
+        })}
       </div>
 
       {activePhoto && (
@@ -75,26 +105,23 @@ export function PhotoLightbox({ photos }: { photos: Photo[] }) {
           onTouchStart={handleTouchStart}
           onTouchEnd={handleTouchEnd}
         >
-          <div
-            className="relative max-w-lg w-full"
-            onClick={(e) => e.stopPropagation()}
-          >
+          {nextPhoto && (
+            <Image src={nextPhoto.image_url} alt="" aria-hidden="true" width={800} height={800} className="hidden" />
+          )}
+          {prevPhoto && (
+            <Image src={prevPhoto.image_url} alt="" aria-hidden="true" width={800} height={800} className="hidden" />
+          )}
+
+          <div className="relative max-w-lg w-full" onClick={(e) => e.stopPropagation()}>
             <div className="relative w-full rounded-card overflow-hidden">
-              {/* Same photo, small size — likely already cached from the grid,
-                  so it appears near-instantly and gives visual continuity
-                  instead of a blank stall. */}
               <Image
                 src={activePhoto.image_url}
                 alt=""
                 aria-hidden="true"
                 width={40}
                 height={40}
-                className={`w-full h-auto blur-xl scale-105 transition-opacity duration-500 ${
-                  isLoaded ? "opacity-0" : "opacity-100"
-                }`}
+                className={`w-full h-auto blur-xl scale-105 transition-opacity duration-500 ${isLoaded ? "opacity-0" : "opacity-100"}`}
               />
-
-              {/* Full-resolution photo, fades in sharp on top once ready */}
               <Image
                 key={activePhoto.id}
                 src={activePhoto.image_url}
@@ -102,18 +129,13 @@ export function PhotoLightbox({ photos }: { photos: Photo[] }) {
                 width={800}
                 height={800}
                 onLoad={() => markLoaded(activePhoto.id)}
-                className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-500 ${
-                  isLoaded ? "opacity-100" : "opacity-0"
-                }`}
+                className={`absolute inset-0 w-full h-full object-contain transition-opacity duration-500 ${isLoaded ? "opacity-100" : "opacity-0"}`}
               />
             </div>
 
             {activePhoto.caption && (
-              <p className="font-body text-white text-sm text-center mt-3">
-                {activePhoto.caption}
-              </p>
+              <p className="font-body text-white text-sm text-center mt-3">{activePhoto.caption}</p>
             )}
-
             <p className="font-body text-white/60 text-xs text-center mt-2">
               {activeIndex! + 1} of {photos.length}
             </p>
