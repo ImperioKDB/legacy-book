@@ -11,6 +11,7 @@ export function PhotoLightbox({ groups }: { groups: Photo[][] }) {
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
   const [loadedIds, setLoadedIds] = useState<Set<string>>(new Set());
   const touchStartX = useRef<number | null>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
 
   function close() {
     setActiveIndex(null);
@@ -54,6 +55,47 @@ export function PhotoLightbox({ groups }: { groups: Photo[][] }) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [activeIndex]);
 
+  // Scale/brighten each tile based on how centered it is within its
+  // own horizontal strip, using IntersectionObserver — the same proven
+  // mechanism as ScrollFade elsewhere. Styles are set directly on the
+  // DOM node (not via React state) to avoid a re-render on every scroll
+  // tick across a gallery with 100+ photos.
+  useEffect(() => {
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+    if (prefersReducedMotion) return;
+
+    const strips = gridRef.current?.querySelectorAll<HTMLDivElement>(
+      ".gallery-scroll-strip"
+    );
+    if (!strips) return;
+
+    const observers: IntersectionObserver[] = [];
+    const thresholdSteps = Array.from({ length: 21 }, (_, i) => i / 20);
+
+    strips.forEach((strip) => {
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const el = entry.target as HTMLElement;
+            const ratio = entry.intersectionRatio;
+            const scale = 0.85 + ratio * 0.15;
+            const brightness = 0.8 + ratio * 0.2;
+            el.style.transform = `scale(${scale})`;
+            el.style.filter = `brightness(${brightness})`;
+          });
+        },
+        { root: strip, threshold: thresholdSteps }
+      );
+
+      strip.querySelectorAll("button").forEach((btn) => observer.observe(btn));
+      observers.push(observer);
+    });
+
+    return () => observers.forEach((o) => o.disconnect());
+  }, [groups]);
+
   const activePhoto = activeIndex !== null ? photos[activeIndex] : null;
   const isLoaded = activePhoto ? loadedIds.has(activePhoto.id) : false;
 
@@ -68,7 +110,7 @@ export function PhotoLightbox({ groups }: { groups: Photo[][] }) {
 
   return (
     <>
-      <div className="space-y-8">
+      <div ref={gridRef} className="space-y-8">
         {groups.map((group, groupIdx) => {
           const startIndex = runningIndex;
           runningIndex += group.length;
@@ -82,7 +124,7 @@ export function PhotoLightbox({ groups }: { groups: Photo[][] }) {
                 <button
                   key={photo.id}
                   onClick={() => setActiveIndex(startIndex + i)}
-                  className={`gallery-scroll-item relative shrink-0 h-52 ${QUILT_WIDTHS[i % QUILT_WIDTHS.length]} snap-center rounded-card overflow-hidden bg-accent-soft active:scale-[0.96] transition-transform duration-150`}
+                  className={`relative shrink-0 h-52 ${QUILT_WIDTHS[i % QUILT_WIDTHS.length]} snap-center rounded-card overflow-hidden bg-accent-soft transition-[transform,filter] duration-200 ease-out active:scale-[0.96]`}
                 >
                   <Image
                     src={photo.image_url}
