@@ -31,4 +31,16 @@ export type Letter = {
   letter_text: string;
   unlock_date: string;
   created_at: string;
+  contact_number: string | null;
+  email: string | null;
+  approved: boolean;
+};
+
+export type PendingLetter = {
+  id: string;
+  student_name: string;
+  unlock_date: string;
+  created_at: string;
+  contact_number: string | null;
+  email: string | null;
 };
