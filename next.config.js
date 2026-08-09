@@ -1,4 +1,5 @@
 /** @type {import('next').NextConfig} */
+// force-redeploy: confirming Supabase remotePatterns is live in build
 const nextConfig = {
   transpilePackages: ["framer-motion"],
   images: {
