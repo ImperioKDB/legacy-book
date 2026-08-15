@@ -57,9 +57,16 @@ export function PhotoLightbox({ groups }: { groups: Photo[][] }) {
 
   // Scale/brighten each tile based on how centered it is within its
   // own horizontal strip, using IntersectionObserver — the same proven
-  // mechanism as ScrollFade elsewhere. Styles are set directly on the
-  // DOM node (not via React state) to avoid a re-render on every scroll
-  // tick across a gallery with 100+ photos.
+  // mechanism used elsewhere (ScrollFade). Styles are set directly on
+  // the DOM node (not via React state) to avoid a re-render on every
+  // scroll tick across a gallery with 100+ photos.
+  //
+  // The centered tile is scaled up enough that it visually overlaps
+  // its neighbors (coverflow look) — this works because CSS `transform`
+  // doesn't affect layout, so the scaled-up box paints over adjacent
+  // tiles without pushing them. `isolate` on the strip contains the
+  // z-index locally so it can never bleed into page-level stacking
+  // (e.g. the nav drawer).
   useEffect(() => {
     const prefersReducedMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)"
@@ -80,10 +87,11 @@ export function PhotoLightbox({ groups }: { groups: Photo[][] }) {
           entries.forEach((entry) => {
             const el = entry.target as HTMLElement;
             const ratio = entry.intersectionRatio;
-            const scale = 0.85 + ratio * 0.15;
-            const brightness = 0.8 + ratio * 0.2;
+            const scale = 0.65 + ratio * 0.45; // 0.65 (edge) -> 1.10 (centered)
+            const brightness = 0.7 + ratio * 0.3;
             el.style.transform = `scale(${scale})`;
             el.style.filter = `brightness(${brightness})`;
+            el.style.zIndex = String(Math.round(ratio * 50));
           });
         },
         { root: strip, threshold: thresholdSteps }
@@ -118,7 +126,7 @@ export function PhotoLightbox({ groups }: { groups: Photo[][] }) {
           return (
             <div
               key={groupIdx}
-              className="gallery-scroll-strip flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-6 px-6"
+              className="gallery-scroll-strip isolate flex gap-3 overflow-x-auto snap-x snap-mandatory pb-2 -mx-6 px-6"
             >
               {group.map((photo, i) => (
                 <button
